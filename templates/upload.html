@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload</title>
+</head>
+<body>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <h3 class="page-header text-center"><span> Upload Image</span></h3>
+        <div>
+            <label for="brouse image"></label>
+            <input type="file" class="form-control" name="upload_image">
+
+        </div>
+        <div>
+            <input type="submit" class="btn">
+        </div>
+    </form>
+    <div>
+        {%for res in data%}
+        <img src="static/images/{{res['img']}}" alt="no image">
+
+        {%endfor%}
+    </div>
+    
+</body>
+</html>
