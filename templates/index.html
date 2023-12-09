@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<title>Parallax Scrolling Website | Vanilla Javascript</title>
+<link rel="stylesheet" type="text/css" href="../static/css/style.css">
+</head>
+<body>
+<header>
+<a href="#" class="logo">Logo</a>
+<ul>
+<li><a href="#" class="active">Home</a></li>
+<li><a href="#">About</a></li>
+<li><a href="/upload">Upload</a></li>
+<li><a href="/result">result</a></li>
+<li><a href="/camera">Camera</a></li>
+</ul>
+</header>
+<section>
+    <img src="../static/images/bgg1.jpg" id="stars">
+    <img src="../static/images/sun2.png" id="moon">
+    <img src="../static/images/trees1.png" id="mountains_behind">
+    <img src="../static/images/trees1.png" id="mountains_behind1">
+    <h2 id="text"><span id="text1">Plant</span><br><span id="text2">Identification</span></h2>
+    <a href="#sec" id="btn">Explore</a>
+    <img src="../static/images/bot.png" id="mountains_front">
+    </section>
+    <div class="sec" id="sec">
+        <div class="discription">
+            <div class="content">
+            <h2>Discription</h2>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo, nobis. Iste, accusamus sequi! Commodi ea, beatae incidunt delectus nam ratione deserunt doloribus, suscipit quam mollitia, aliquam dolor at iure quaerat?</p>
+            </div>   
+            <img src="./img/moon.png" id="pp">     
+        </div>
+        <a href="{{ url_for('upload') }}"><button>Upload Image</button></a>
+        <a href="{{ url_for('display') }}"><button>Display Images</button></a>
+    </div>
+    <script>
+        let stars = document.getElementById('stars');
+        let moon = document.getElementById('moon');
+        let mountains_behind  = document.getElementById('mountains_behind');
+        let mountains_behind1  = document.getElementById('mountains_behind1');
+        let text = document.getElementById('text');
+        let text1 = document.getElementById('text1');
+        let text2 = document.getElementById('text2');
+        let btn = document.getElementById('btn');
+        let mountains_front = document.getElementById('mountains_front');
+        let header =  document.querySelector('header');
+        window.addEventListener('scroll', function(){
+        let value  = window.scrollY;
+        stars.style.left = value *0+ 'px';
+        moon.style.left = value *8 + 'px';
+        mountains_behind.style.left = value * -10 + 'px';
+        mountains_behind1.style.left = value * 10 + 'px';
+        mountains_front.style.top = value * 0 + 'px';
+       // text.style.marginLeft = value * 1.4 + 'px';
+        text1.style.marginLeft = value * -10 + 'px';
+        text2.style.marginLeft = value * 10 + 'px';
+        btn.style.marginTop = value * 1.5 + 'px';
+        header.style.top = value * 0.5 + 'px';
+        })
+        </script>
+</body>
+</html>
