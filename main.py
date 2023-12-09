@@ -1,64 +1,48 @@
-from flask import Flask,render_template,flash, Blueprint,blueprints,request
-from second import second
+from flask import Flask,render_template,flash, Blueprint,blueprints,request,redirect,url_for
+#from second import second
 import os
-from db.db import db
-from camer.camera_a import camera_a
-import sqlite3
-app= Flask(__name__)
-app.secret_key='123'
-app.register_blueprint(second,url_prefix="")
-app.register_blueprint(db,url_prefix="")
-app.register_blueprint(camera_a,url_prefix="")
+from werkzeug.utils import secure_filename
+#from camer.camera_a import camera_a
+from flask_pymongo import PyMongo
+app = Flask(__name__)
+
+# Configuration for MongoDB
+app.config['MONGO_URI'] = 'mongodb://localhost:27017/image_db'
+mongo = PyMongo(app)
+
+# Configuration for file upload
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
-
-
-con=sqlite3.connect("image.db")
-con.execute("CREATE TABLE IF NOT EXISTS image(pid INTEGER PRIMARY KEY, img TEXT)")
-con.close()
-app.config['UPLOAD_FOLDER']="static\images"
-
-@app.route('/upload',methods=['GET','POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    con=sqlite3.connect("image.db")
-    con.row_factory=sqlite3.Row
-    cur=con.cursor()
-    cur.execute("select * from image")
-    data=cur.fetchall()
-    con.close()
-    if request.method=='POST':
-        upload_image=request.files['upload_image']
-        if upload_image.filename!='':
-            filepath=os.path.join(app.config['UPLOAD_FOLDER'],upload_image.filename)
-            upload_image.save(filepath)
-            con=sqlite3.connect("image.db")
-            cur=con.cursor()
-            cur.execute("insert into image(img)values(?)",(upload_image.filename,))
-            con.commit()
-            flash("File upload Successfully","success")
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            mongo.db.images.insert_one({'filename': filename})
+            return redirect(url_for('index'))
+    return render_template('upload.html')
 
-
-            con=sqlite3.connect("image.db")
-            con.row_factory=sqlite3.Row
-            cur=con.cursor()
-            cur.execute("select * from image")
-            data=cur.fetchall()
-            con.close()
-            return render_template("upload.html",data=data)
-
-        
-    return render_template("upload.html",data=data)
+@app.route('/display')
+def display():
+    images = mongo.db.images.find()
+    return render_template('display.html', images=images)
 
 
 
-
-
-
-
-
-
-if __name__=="__main__":
+if __name__ == '__main__':
     app.run(debug=True)
-    
