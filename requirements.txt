@@ -1,0 +1,8 @@
+flask
+Flask-SQLAlchemy
+tensorflow
+sqlite3
+cv2
+numpy
+threading
+
