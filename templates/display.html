@@ -7,8 +7,7 @@
 </head>
 <body>
     <h1>Display Images</h1>
-    {% for image in images %}
-        <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" alt="{{ image.filename }}">
-    {% endfor %}
+        <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="{{ filename}}">
+    <h1>{{resu}}</h1>
 </body>
 </html>
