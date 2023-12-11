@@ -1,5 +1,8 @@
 from flask import Flask,render_template,flash, Blueprint,blueprints,request,redirect,url_for
 from second import second
+from flask_wtf import FlaskForm
+
+from flask_bcrypt import Bcrypt
 import os
 import pandas as pd
 from werkzeug.utils import secure_filename
@@ -13,7 +16,39 @@ app.register_blueprint(second,url_prefix="")
 # Configuration for MongoDB
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/image_db'
 mongo = PyMongo(app)
-collection = mongo.db['images']
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+        if request.method == 'POST':
+            username = request.form.get('username')
+            password = request.form.get('password')
+            user_data = mongo.db.user.find_one({'username': username, 'password': password})
+            if user_data:
+                flash('Login successful!', 'success')
+                return render_template('index.html')
+            else:
+                flash('Invalid username or password', 'danger')
+        
+        return render_template('login.html')
+@app.route('/sign-up', methods=['GET', 'POST'])
+def sign_up():
+    if request.method == 'POST':
+            username = request.form.get('username', '')
+            password = request.form.get('password', '')
+            # You should hash and salt the password in a real-world application
+            mongo.db.user.insert_one({'username': username, 'password': password})
+            flash('Sign up successful! Please log in.', 'success')
+            return redirect(url_for('login'))
+    else:
+        flash('Sign up successful! Please log in.', 'success')
+    return render_template('login.html')
+    
+
+
+
+
+
+
+
 
 # Configuration for file upload
 UPLOAD_FOLDER = 'static/uploads'
@@ -23,6 +58,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 excel_file_path = 'backednd\plant dataset.xlsx'
+
+
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -161,11 +199,6 @@ def display():
 @app.route('/profile')
 def profile():
     return render_template("profile.html")
-
-
-@app.route('/login')
-def login():
-    return render_template('login.html')
 @app.route('/camera', methods=['GET', 'POST'])
 def camera():
     if request.method == 'POST':
@@ -183,6 +216,8 @@ def camera():
             return render_template('index.html')
 
     return render_template('index.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
