@@ -1,10 +1,10 @@
 const PROJECT = 'all'; // try 'weurope', 'canada'…
-const API_URL = 'https://my-api.plantnet.org/v2/identify/' + PROJECT;
+const API_URL = 
 
 // to make this example work you have to expose your API key and
 // authorize your webserver address in "Authorized domains" section
 // see https://my.plantnet.org/account/doc#exposekey
-const API_KEY = '2b10AgX9LS0oGoIWZeDphXFbqO';
+const API_KEY = 
 
 const identify = async () => {
     // 1. Get the file from an input type=file : 
